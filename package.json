@@ -6,7 +6,8 @@
   "dependencies": {
     "md5": "^2.0.0",
     "mongoose": "^4.3.7",
-    "restify": "~2.6.1"
+    "restify": "~2.6.1",
+    "validator": "^4.5.1"
   },
   "scripts": {
     "start": "node ./index.js"
