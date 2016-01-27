@@ -1,6 +1,7 @@
 var restify = require('restify');
 var package = require('../notes-api/package.json');
 var userController = require("./app/controllers/user");
+var noteController = require("./app/controllers/note");
 
 var server = restify.createServer({
     name: package.name,
@@ -16,8 +17,9 @@ server.use(restify.pre.sanitizePath());
 
 
 server.post('/user/register', userController.registerUser);
-
 server.post('/user/authenticate', userController.authenticateUser);
+
+server.post('/note/create', noteController.createNote);
 
 server.listen(port, function () {
     console.log('%s#%s listening at %s', server.name, server.versions, port);

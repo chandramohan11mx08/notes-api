@@ -16,4 +16,21 @@ function validateEmailAndPassword(email, password) {
     return {'isValid': false, 'messages': messages};
 }
 
+function validateTitleAndDescription(title, description) {
+    var isValidTitle = !validator.isNull(title);
+    var isValidDescription = !validator.isNull(description);
+    var messages = [];
+    if (isValidTitle && isValidDescription) {
+        return {'isValid': true};
+    }
+    if (!isValidTitle) {
+        messages.push("Title should not be empty");
+    }
+    if (!isValidDescription) {
+        messages.push("Description should not be empty");
+    }
+    return {'isValid': false, 'messages': messages};
+}
+
 exports.validateEmailAndPassword = validateEmailAndPassword;
+exports.validateTitleAndDescription = validateTitleAndDescription;
