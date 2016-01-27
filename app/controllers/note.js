@@ -57,5 +57,21 @@ var createNote = function (req, res, next) {
     }
 };
 
+var listNotes = function (req, res, next) {
+    var credentials = req.authorization.basic;
+    var email = credentials.username;
+    var db = mongoose.connect(connectionString);
+    Note.find({'email': email, 'isDeleted': false}, 'title description createdAt', function (err, notes) {
+        db.disconnect(function () {
+            if(err){
+                res.send(500,{messages:'Something went wrong'});
+            }else{
+                res.send({'notes':notes});
+            }
+        });
+    });
+}
+
 exports.createNote = createNote;
 exports.isTitleAlreadyExistsForUser = isTitleAlreadyExistsForUser;
+exports.listNotes = listNotes;
