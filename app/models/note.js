@@ -12,5 +12,16 @@ var noteSchema = new mongoose.Schema({
     }
 });
 
+noteSchema.pre('save', function (next) {
+    var currentDate = new Date();
+    this.modifiedAt = currentDate;
+    if (!this.createdAt) {
+        this.createdAt = currentDate;
+    } else {
+        this.meta.noOfTimesModified++;
+    }
+    next();
+});
+
 var Note = mongoose.model('Note', noteSchema);
 module.exports = Note;

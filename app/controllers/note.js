@@ -61,7 +61,7 @@ var listNotes = function (req, res, next) {
     var credentials = req.authorization.basic;
     var email = credentials.username;
     var db = mongoose.connect(connectionString);
-    Note.find({'email': email, 'isDeleted': false}, 'title description createdAt', function (err, notes) {
+    Note.find({'email': email, 'isDeleted': false}, 'title description createdAt modifiedAt meta', function (err, notes) {
         db.disconnect(function () {
             if (err) {
                 res.send(500, {messages: 'Something went wrong'});
