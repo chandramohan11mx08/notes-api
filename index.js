@@ -14,7 +14,7 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 server.use(restify.CORS());
 server.use(restify.pre.sanitizePath());
-
+server.use(restify.authorizationParser());
 
 server.post('/user/register', userController.registerUser);
 server.post('/user/authenticate', userController.authenticateUser);

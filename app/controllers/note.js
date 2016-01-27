@@ -19,11 +19,8 @@ var createNote = function (req, res, next) {
 
     var validationResult = helper.validateTitleAndDescription(title, description);
     if (validationResult.isValid) {
-        var authorization = req.headers["authorization"];
-        var tmp = authorization.split(' ');
-        var credentials = new Buffer(tmp[1], 'base64').toString().split(':');
-        var email = credentials[0];
-
+        var credentials = req.authorization.basic;
+        var email = credentials.username;
         var newNote = getNewNote(email, title, description);
 
         var db = mongoose.connect(connectionString);
