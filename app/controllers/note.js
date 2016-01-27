@@ -19,7 +19,7 @@ var isTitleAlreadyExistsForUser = function (req, res, next) {
     var email = credentials.username;
 
     var db = mongoose.connect(connectionString);
-    Note.findOne({'email': email, 'title': title}, function (err, note) {
+    Note.findOne({'email': email, 'title': title,'isDeleted':false}, function (err, note) {
         db.disconnect(function () {
             var isExists = (note == null) ? false : true;
             if (isExists) {
@@ -88,7 +88,7 @@ var updateNote = function (req, res, next) {
         res.send(errorCode, {'isUpdated': status, 'messages': messages});
     }
 
-    Note.findOne({'_id': noteId, 'email': email}, function (err, note) {
+    Note.findOne({'_id': noteId, 'email': email,'isDeleted':false}, function (err, note) {
         if (err) {
             sendUpdateResponse(false, ['Something went wrong'], 500);
         } else {
@@ -109,7 +109,42 @@ var updateNote = function (req, res, next) {
     });
 }
 
+var deleteNote = function (req, res, next) {
+    var credentials = req.authorization.basic;
+    var email = credentials.username;
+    var params = req.params;
+    var noteId = params.noteId;
+    var db = mongoose.connect(connectionString);
+
+    function sendDeleteResponse(status, messages, errorCode) {
+        if (db) {
+            db.disconnect();
+        }
+        res.send(errorCode, {'isDeleted': status, 'messages': messages});
+    }
+
+    Note.findOne({'_id': noteId, 'email': email,'isDeleted':false}, function (err, note) {
+        if (err) {
+            sendDeleteResponse(false, ['Something went wrong'], 500);
+        } else {
+            if (note != null) {
+                note.isDeleted = true;
+                note.save(function (err) {
+                    if (err) {
+                        sendDeleteResponse(false, ['Something went wrong'], 500);
+                    } else {
+                        sendDeleteResponse(true, [], 200);
+                    }
+                });
+            } else {
+                sendDeleteResponse(false, ["Cannot find your note"], 200);
+            }
+        }
+    });
+}
+
 exports.createNote = createNote;
 exports.isTitleAlreadyExistsForUser = isTitleAlreadyExistsForUser;
 exports.listNotes = listNotes;
 exports.updateNote = updateNote;
+exports.deleteNote = deleteNote;

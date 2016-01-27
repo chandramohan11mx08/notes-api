@@ -21,6 +21,7 @@ server.post('/user/register', userController.isEmailAllReadyExists, userControll
 server.post('/note/create', userController.authenticationHandler, noteController.isTitleAlreadyExistsForUser, noteController.createNote);
 server.post('/note/list', userController.authenticationHandler, noteController.listNotes);
 server.post('/note/update', userController.authenticationHandler, noteController.updateNote);
+server.post('/note/delete', userController.authenticationHandler, noteController.deleteNote);
 
 server.listen(port, function () {
     console.log('%s#%s listening at %s', server.name, server.versions, port);
