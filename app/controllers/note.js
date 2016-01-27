@@ -77,7 +77,6 @@ var updateNote = function (req, res, next) {
     var email = credentials.username;
     var params = req.params;
     var noteId = params.noteId;
-    var title = params.title;
     var description = params.description;
     var db = mongoose.connect(connectionString);
 
@@ -93,7 +92,6 @@ var updateNote = function (req, res, next) {
             sendUpdateResponse(false, ['Something went wrong'], 500);
         } else {
             if (note != null) {
-                note.title = title;
                 note.description = description;
                 note.save(function (err) {
                     if (err) {
