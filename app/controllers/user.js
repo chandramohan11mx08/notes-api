@@ -2,8 +2,9 @@ var mongoose = require('mongoose');
 var User = require("../models/user");
 var md5 = require('md5');
 var helper = require('../helpers/helper');
+var config = require('../config');
 
-var connectionString = 'mongodb://localhost/notes';
+var connectionString = config.mongodb;
 
 function sendRegisterUserResponse(res, status, messages) {
     res.send({status: status, "messages": messages})

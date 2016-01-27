@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var Note = require("../models/note");
 var helper = require("../helpers/helper");
-var connectionString = 'mongodb://localhost/notes';
+var config = require('../config');
+
+var connectionString = config.mongodb;
 
 function getNewNote(email, title, description) {
     var newNote = new Note({
