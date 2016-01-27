@@ -1,25 +1,9 @@
 var mongoose = require('mongoose');
 var User = require("../models/user");
 var md5 = require('md5');
-var validator = require('validator');
+var helper = require('../helpers/helper');
 
 var connectionString = 'mongodb://localhost/notes';
-
-function validateEmailAndPassword(email, password) {
-    var isValidEmail = validator.isEmail(email);
-    var isValidPassword = !validator.isNull(password);
-    var messages = [];
-    if (isValidEmail && isValidPassword) {
-        return {'isValid': true};
-    }
-    if (!isValidEmail) {
-        messages.push("Email is not valid");
-    }
-    if (!isValidPassword) {
-        messages.push("Password is not valid");
-    }
-    return {'isValid': false, 'messages': messages};
-}
 
 function isEmailAllReadyExists(email, callBack) {
     User.find({'email': email}, function (err, users) {
@@ -48,7 +32,7 @@ var registerUser = function (req, res, next) {
     var email = params.email.trim();
     var password = params.password.trim();
 
-    var __ret = validateEmailAndPassword(email, password);
+    var __ret = helper.validateEmailAndPassword(email, password);
     var db = mongoose.connect(connectionString);
 
     function sendResponse(status, messages) {
