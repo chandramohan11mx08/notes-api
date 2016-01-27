@@ -68,17 +68,35 @@ var registerUser = function (req, res, next) {
     }
 };
 
-var authenticateUser = function(req, res, next){
+var authenticateUser = function (req, res, next) {
     var params = req.params;
     var email = params.email;
     var password = md5(params.password);
     var db = mongoose.connect(connectionString);
-    User.findOne({'email':email, 'password': password},'_id email' ,function(err, user){
+    User.findOne({'email': email, 'password': password}, '_id email', function (err, user) {
         db.disconnect();
         var authenticated = err || user == null ? false : true;
-        res.send({'authenticated':authenticated,'user':user})
+        res.send({'authenticated': authenticated, 'user': user})
     });
 };
 
-module.exports.registerUser = registerUser;
-module.exports.authenticateUser = authenticateUser;
+var authenticationHandler = function (req, res, next) {
+    var credentials = req.authorization.basic;
+    var email = credentials.username;
+    var password = md5(credentials.password);
+    var db = mongoose.connect(connectionString);
+    User.findOne({'email': email, 'password': password}, '_id email', function (err, user) {
+        db.disconnect(function () {
+            var authenticated = err || user == null ? false : true;
+            if (authenticated) {
+                next();
+            } else {
+                res.send(401, {'authenticated': false})
+            }
+        });
+    });
+};
+
+exports.registerUser = registerUser;
+exports.authenticateUser = authenticateUser;
+exports.authenticationHandler = authenticationHandler;

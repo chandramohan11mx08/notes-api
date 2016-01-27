@@ -27,7 +27,7 @@ var createNote = function (req, res, next) {
         newNote.save(newNote, function (err) {
             db.disconnect();
             var isSaved = err ? false : true;
-            sendResponse(true, []);
+            sendResponse(isSaved, []);
         });
     } else {
         sendResponse(false, validationResult.messages);
