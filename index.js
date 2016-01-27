@@ -19,7 +19,7 @@ server.use(restify.authorizationParser());
 server.post('/user/register', userController.isEmailAllReadyExists, userController.registerUser);
 
 server.post('/note/create', userController.authenticationHandler, noteController.isTitleAlreadyExistsForUser, noteController.createNote);
-server.post('/note/list', userController.authenticationHandler, noteController.listNotes);
+server.get('/note/list', userController.authenticationHandler, noteController.listNotes);
 server.post('/note/update', userController.authenticationHandler, noteController.updateNote);
 server.post('/note/delete', userController.authenticationHandler, noteController.deleteNote); //soft delete only, document is not removed
 
