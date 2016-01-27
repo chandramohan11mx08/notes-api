@@ -43,7 +43,7 @@ var createNote = function (req, res, next) {
         var newNote = getNewNote(email, title, description);
 
         var db = mongoose.connect(connectionString);
-        newNote.save(newNote, function (err) {
+        newNote.save(function (err) {
             db.disconnect();
             var isSaved = err ? false : true;
             sendResponse(isSaved, []);
@@ -63,15 +63,53 @@ var listNotes = function (req, res, next) {
     var db = mongoose.connect(connectionString);
     Note.find({'email': email, 'isDeleted': false}, 'title description createdAt', function (err, notes) {
         db.disconnect(function () {
-            if(err){
-                res.send(500,{messages:'Something went wrong'});
-            }else{
-                res.send({'notes':notes});
+            if (err) {
+                res.send(500, {messages: 'Something went wrong'});
+            } else {
+                res.send({'notes': notes});
             }
         });
+    });
+}
+
+var updateNote = function (req, res, next) {
+    var credentials = req.authorization.basic;
+    var email = credentials.username;
+    var params = req.params;
+    var noteId = params.noteId;
+    var title = params.title;
+    var description = params.description;
+    var db = mongoose.connect(connectionString);
+
+    function sendUpdateResponse(status, messages, errorCode) {
+        if (db) {
+            db.disconnect();
+        }
+        res.send(errorCode, {'isUpdated': status, 'messages': messages});
+    }
+
+    Note.findOne({'_id': noteId, 'email': email}, function (err, note) {
+        if (err) {
+            sendUpdateResponse(false, ['Something went wrong'], 500);
+        } else {
+            if (note != null) {
+                note.title = title;
+                note.description = description;
+                note.save(function (err) {
+                    if (err) {
+                        sendUpdateResponse(false, ['Something went wrong'], 500);
+                    } else {
+                        sendUpdateResponse(true, [], 200);
+                    }
+                });
+            } else {
+                sendUpdateResponse(false, ["Cannot find your note"], 200);
+            }
+        }
     });
 }
 
 exports.createNote = createNote;
 exports.isTitleAlreadyExistsForUser = isTitleAlreadyExistsForUser;
 exports.listNotes = listNotes;
+exports.updateNote = updateNote;
