@@ -19,7 +19,7 @@ server.use(restify.authorizationParser());
 server.post('/user/register', userController.registerUser);
 server.post('/user/authenticate', userController.authenticateUser);
 
-server.post('/note/create', userController.authenticationHandler, noteController.createNote);
+server.post('/note/create', userController.authenticationHandler, noteController.isTitleAlreadyExistsForUser, noteController.createNote);
 
 server.listen(port, function () {
     console.log('%s#%s listening at %s', server.name, server.versions, port);

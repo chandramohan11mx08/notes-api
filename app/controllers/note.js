@@ -12,6 +12,25 @@ function getNewNote(email, title, description) {
     return newNote;
 }
 
+var isTitleAlreadyExistsForUser = function (req, res, next) {
+    var params = req.params;
+    var title = params.title.trim();
+    var credentials = req.authorization.basic;
+    var email = credentials.username;
+
+    var db = mongoose.connect(connectionString);
+    Note.findOne({'email': email, 'title': title}, function (err, note) {
+        db.disconnect(function () {
+            var isExists = (note == null) ? false : true;
+            if (isExists) {
+                res.send({'isCreated': false, 'messages': ["You already have a note with same title "]});
+            } else {
+                next();
+            }
+        });
+    });
+}
+
 var createNote = function (req, res, next) {
     var params = req.params;
     var title = params.title.trim();
@@ -39,3 +58,4 @@ var createNote = function (req, res, next) {
 };
 
 exports.createNote = createNote;
+exports.isTitleAlreadyExistsForUser = isTitleAlreadyExistsForUser;
