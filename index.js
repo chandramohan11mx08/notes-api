@@ -16,8 +16,7 @@ server.use(restify.CORS());
 server.use(restify.pre.sanitizePath());
 server.use(restify.authorizationParser());
 
-server.post('/user/register', userController.registerUser);
-server.post('/user/authenticate', userController.authenticateUser);
+server.post('/user/register', userController.isEmailAllReadyExists, userController.registerUser);
 
 server.post('/note/create', userController.authenticationHandler, noteController.isTitleAlreadyExistsForUser, noteController.createNote);
 
