@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var User = require("../models/user");
 var md5 = require('md5');
 var validator = require('validator');
-var async = require('async');
 
 var connectionString = 'mongodb://localhost/notes';
 
@@ -64,7 +63,6 @@ var registerUser = function (req, res, next) {
         isEmailAllReadyExists(email, function (err, isExists) {
             if (err)
                 sendResponse(false, ["Something went wrong"]);
-
             else {
                 if (isExists) {
                     sendResponse(false, ["Email address already exists"]);
@@ -86,4 +84,17 @@ var registerUser = function (req, res, next) {
     }
 };
 
+var authenticateUser = function(req, res, next){
+    var params = req.params;
+    var email = params.email;
+    var password = md5(params.password);
+    var db = mongoose.connect(connectionString);
+    User.findOne({'email':email, 'password': password},'_id email' ,function(err, user){
+        db.disconnect();
+        var authenticated = err || user == null ? false : true;
+        res.send({'authenticated':authenticated,'user':user})
+    });
+};
+
 module.exports.registerUser = registerUser;
+module.exports.authenticateUser = authenticateUser;

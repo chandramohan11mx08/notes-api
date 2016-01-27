@@ -17,6 +17,8 @@ server.use(restify.pre.sanitizePath());
 
 server.post('/user/register', userController.registerUser);
 
+server.post('/user/authenticate', userController.authenticateUser);
+
 server.listen(port, function () {
     console.log('%s#%s listening at %s', server.name, server.versions, port);
 });
